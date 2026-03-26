@@ -26,7 +26,7 @@ This is a high-performing C++20 simulation of a Real-Time Bidding (RTB) ad excha
 
 - Performance Benchmarking: Implemented a custom high-resolution profiling class using std::chrono::steady_clock to precisely measure performance down to the millisecond, ensuring deterministic performance metrics.
 
-# How to run
+# How to run (Linux/MacOS)
 1) git clone https://github.com/Micaelangelo-Cordoba/High-Throughput-Ad-Bid-Processor.git
 
 2) Change Directory:
