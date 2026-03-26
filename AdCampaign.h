@@ -27,9 +27,10 @@ class AdCampaign {
     for each bid */
     bool canAfford (double bidAmount) const;
 
+    //if the bool member function above succeeds, make a transaction and keep track of unique impressions.
     void transaction(double bidAmount, uint32_t userID);
 
-    /*Getter functions for the end of the function
+    /*Getter functions
     analyses how successful the Campaign was */
     double returnBalance() const {return m_RemainingBudget;}
     uint32_t returnTotalImpressions() const {return totalImpressions;}
@@ -39,9 +40,9 @@ class AdCampaign {
 
     private:
 
-    double m_RemainingBudget;
-    uint32_t totalImpressions {0};
-    uint32_t m_campaignID;
+    double m_RemainingBudget; //each starts off with $50,000
+    uint32_t totalImpressions {0}; //returns amount of impressions including impressions from the same user
+    uint32_t m_campaignID; //unique campaign ID
 
     /*unordered_set allows only unique user Id's 
     to enter, allows us to track amount of unique users */

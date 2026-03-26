@@ -9,12 +9,17 @@ class AdEngine {
 
     public:
 
+    //revenue starts at 0.
     AdEngine() : totalRevenue {0.0} {}
 
+    //100 campaigns will be inserted into an unordered_map at the beginnning of the program.
     void insertCampaign(uint32_t campaignID, double Budget);
 
+    //each line of the CSV file will be parsed into a BidEvent struct, from there it would make a proper transaction from an AdCampaign
+    //object inside the unordered_map
     void processBidEvent(const BidEvent& event);
 
+    //returns amount of revenue processed from the CSV file at the end of the program.
     double getRevenue() const {return totalRevenue;}
     private:
 

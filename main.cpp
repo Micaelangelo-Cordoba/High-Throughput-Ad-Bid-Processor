@@ -51,7 +51,7 @@ size_t fileSize = fileInfo.st_size;
 //fileSize -> im requesting the size of the file in RAM
 //PROT_READ -> lock the memory to read_only
 //MAP_PRIVATE -> if accidentally writen, do not update the file
-//canOpen as filedescriptor ticket
+//canOpen as ticket
 //0 -> start reading from byte 0 onward.
 //static_cast<const char*> mmap returns void*, must cast the a char ptr to dereference and read.
 const char* fileData = static_cast<const char*>(mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE, canOpen, 0));
@@ -68,7 +68,7 @@ std::cout << "Starting High Speed Ad-Bid Processor\n";
 Timer t;
 
 ParseFile(fileData, fileSize, Engine);
-double timeElapsed = t.timeElapsed();
+double timeElapsed = t.timeElapsed(); 
 
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
 std::cout << std::left << std::setfill(' ') << "Processing Comlete!\n";

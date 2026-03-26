@@ -20,7 +20,7 @@ class Timer {
 
     using Clock = std::chrono::steady_clock;
 
-    /*Formot for outputting the duration of the program
+    /*Format for outputting the duration of the program
     in milliseconds. */
     using Duration = std::chrono::duration<double, std::ratio<1,1000>>;
     using TimePoint = std::chrono::time_point<Clock>;
