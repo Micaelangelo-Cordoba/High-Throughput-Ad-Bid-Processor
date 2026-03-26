@@ -22,7 +22,9 @@ This is a high-performing C++20 simulation of a Real-Time Bidding (RTB) ad excha
 
 - Optimized Memory Management: The BidEvent struct used to parse the data is strictly ordered by byte size (uint64_t, double, uint32_t, uint32_t) in order to prevent wasted padding.
 
-- Hash-Based Data Structures: utilizes std::unordered_map to store unique campaigns and fast lookups. Uses std::unordered_set for unique user tracking.
+- Hash-Based Data Structures: Utilizes std::unordered_map to store unique campaigns and fast lookups. Uses std::unordered_set for unique user tracking.
+
+- Performance Benchmarking: Implemented a custom high-resolution profiling class using std::chrono::steady_clock to precisely measure performance down to the millisecond, ensuring deterministic performance metrics.
 
 # How to run
 1) git clone https://github.com/Micaelangelo-Cordoba/High-Throughput-Ad-Bid-Processor.git
