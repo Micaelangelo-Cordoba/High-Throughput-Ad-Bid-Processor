@@ -1,12 +1,15 @@
 # C++ High-Throughput-Ad-Bid-Processor
 
 # Overview
+Engineered a high-throughput, single-threaded bid-event processor in C++20, designed to efficiently process large volumes of simulated Real-Time Bidding (RTB) auction data.
 
-This is a high-performing C++20 simulation of a Real-Time Bidding (RTB) ad exchange. Designed to process massive streams of auction data with low-latency, this engine validates transactions, enforces campaign budgets, and tracks analytics (number of impressions and unique reach) for 100 campaigns. The processor handles 10 million rows of auction data in approximately 6 seconds (~1.7 million tps) on a 2019 MacBook Air by bypassing standard C++ I/O <fstream> and string parsing entirely.
+The processor handles 10 million simulated bid events in approximately 6 seconds (~1.7 million events/sec) on a 2019 Intel-based MacBook Air. It validates campaign budgets, processes eligible transactions, and tracks impressions and unique user reach across 100 simulated advertising campaigns.
+
+To minimize I/O and parsing overhead, the processor utilizes **POSIX memory-mapped files (mmap)**, allocation-free integer parsing with std::from_chars, and hash-based data structures for efficient campaign lookups and user tracking.
 
 # Core Features
 
-- High Frequency Throughput: Achieves around ~1.7 million transactions per second utilizing a custom zero-copy memory-mapped architecture.
+- High Frequency Throughput: Achieves around ~1.7 million events per second utilizing a custom zero-copy memory-mapped architecture.
   
 - State Management: Enforces strict financial budget caps for ad campaigns using O(1) constant-time lookups.
 
