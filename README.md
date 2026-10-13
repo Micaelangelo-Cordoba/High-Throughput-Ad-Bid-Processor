@@ -18,7 +18,7 @@ This is a high-performing C++20 simulation of a Real-Time Bidding (RTB) ad excha
 
 - Zero-Copy File I/O (mmap): Bypasses the heavy overhead of std::fstream. The dataset is mapped directly into virtual memory using the POSIX mmap system call, allowing the parser to iterate through the data as a single char array.
 
-- Zero-Allocation Parsing (<charconv>): Eliminates heap allocations (e.g. std::string, getline()). Leverages modern C++ through std::from_chars to translate raw ASCII bytes directly into CPU registers. (Note: includes a std::strtod implementation to bypass an Apple Clang limitation regarding the lack of floating-point std::from_chars support).
+- Allocation-free numeric parsing of file data (<charconv>): Reduces heap allocations (e.g. std::string, getline()). Leverages modern C++ through std::from_chars to translate raw ASCII bytes directly into CPU registers. (Note: includes a std::strtod implementation to bypass an Apple Clang limitation regarding the lack of floating-point std::from_chars support).
 
 - Optimized Memory Management: The BidEvent struct used to parse the data is strictly ordered by byte size (uint64_t, double, uint32_t, uint32_t) in order to prevent wasted padding.
 
