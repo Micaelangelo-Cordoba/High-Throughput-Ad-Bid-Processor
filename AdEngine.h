@@ -31,6 +31,7 @@ class AdEngine {
 
 
 inline void AdEngine::insertCampaign(uint32_t campaignID, double Budget) {
+    //Watch out for identical campagin id that can override things
     campaigns.emplace(campaignID, AdCampaign {campaignID, Budget});
 }
 

@@ -67,7 +67,7 @@ if (fileData == MAP_FAILED) {
 std::cout << "Starting High Speed Ad-Bid Processor\n";
 Timer t;
 
-ParseFile(fileData, fileSize, Engine);
+ParseFile(fileData, fileSize, Engine); //ADD FUNCTIONALITY HERE IT RETURNS A BOOL
 double timeElapsed = t.timeElapsed(); 
 
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
