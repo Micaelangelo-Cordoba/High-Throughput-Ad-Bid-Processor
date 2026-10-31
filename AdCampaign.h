@@ -57,12 +57,16 @@ class AdCampaign {
 //bottom member function needs to be fixed. Does double comparison. Double comparison gets messy since we cannot
 //directly compare it. we can use an integer representing total cents.
 
-//we can also validate whether it takes in negative bigAmounts!
+//we can also validate whether it takes in negative or 0 value bidamounts
+
+//canAfford is responsible for transaction() from getting called, so we can check here
+
 inline bool AdCampaign::canAfford(Cents bidAmount) const {
-    return m_RemainingBudget >= bidAmount; //now were comparing Cents rather than floating point numbers
+    //returns true only if bidAmounts are positive!
+    return bidAmount > 0 && m_RemainingBudget >= bidAmount; //now were comparing Cents rather than floating point numbers
 }
 
-//negative check is especially relevant here! Negative checks can actually increase the budget
+
 inline void AdCampaign::transaction(Cents bidAmount, uint32_t userID) {
     m_RemainingBudget -= bidAmount;
     totalImpressions++;

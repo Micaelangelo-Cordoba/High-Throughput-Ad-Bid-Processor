@@ -74,11 +74,17 @@ if (ptr != end) { //decimal point exists here.
         //we can safely get total:
 
         Dollars *= 100;
-        total = Dollars + FractDollars;
+        // total = Dollars + FractDollars;
+        //total is passed by reference, we dont want to modify it before checking if 
+        //its valid in the first place.
+
+        Cents result = Dollars + FractDollars; //compare this value
 
         //account for if total is 0. implies an invalid bid amount
-        if (total == 0) return false;
+        if (result == 0) return false;
 
+        //now its valid, now assign total
+        total = result;
         return true; //can exit here.
     }
 
@@ -116,9 +122,14 @@ if (Dollars > (maxValue - FractDollars) / 100) return false; //integer overflow
 
 Dollars *= 100; 
 
-total = Dollars + FractDollars;
+// total = Dollars + FractDollars;  same issue as above
 
-if (total == 0) return false;
+Cents result = Dollars + FractDollars;
+
+if (result == 0) return false;
+
+
+total = result;
 
 return true; 
 

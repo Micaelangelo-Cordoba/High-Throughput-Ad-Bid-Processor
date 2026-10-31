@@ -43,9 +43,19 @@ if(canOpen == -1) {
 //OS fills struct with file info,
 //we must get its size to iteratre through CSV
 struct stat fileInfo;
-fstat(canOpen, &fileInfo);
+int metaData = fstat(canOpen, &fileInfo);
+
+if (metaData == -1) {
+    std::cerr << "Failed to retrieve CSV file metadata.\n";
+    return -1;
+}
+
 size_t fileSize = fileInfo.st_size;
 
+if (fileSize == 0) {
+    std::cerr << "Empty CSV file.\n";
+    return 1; 
+}
 
 //nullptr ->tell OS to find an empty spot in RAM
 //fileSize -> im requesting the size of the file in RAM
@@ -67,7 +77,11 @@ if (fileData == MAP_FAILED) {
 std::cout << "Starting High Speed Ad-Bid Processor\n";
 Timer t;
 
-ParseFile(fileData, fileSize, Engine); //ADD FUNCTIONALITY HERE IT RETURNS A BOOL
+if (!ParseFile(fileData, fileSize, Engine)) {
+    //returns false
+    std::cerr << "FAILED TO PARSE. INVALID CSV FORMAT OR INFORMATION\n";
+    return 1; 
+}
 double timeElapsed = t.timeElapsed(); 
 
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
@@ -75,7 +89,7 @@ std::cout << std::left << std::setfill(' ') << "Processing Comlete!\n";
 std::cout << "Elapsed Time to process Ads: " << timeElapsed << " milliseconds\n";
 
 //check this output statement for errors
-std::cout << "Total Revenue Processed: $" << Engine.getRevenue() / 100 << "." << Engine.getRevenue() % 100 << '\n';
+std::cout << "Total Revenue Processed: $" << Engine.getRevenue() / 100 << "." << std::right << std::setw(2) << std::setfill('0') << Engine.getRevenue() % 100 << '\n';
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
 
 
