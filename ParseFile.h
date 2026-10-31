@@ -5,9 +5,124 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm> //for std::find()
+#include <limits>
 #include "AdEngine.h"
 #include "AdCampaign.h"
 
+
+//should be from start of double value to endLine (pointer to where last parsable value ends)
+bool CentsBidAmountParser(const char* start, const char* end, Cents& total) { //25.67\n
+//start should be the start of that double value
+
+uint64_t Dollars = 0; //get dollars first, the dot allows the first section of the double to be processed.
+
+auto DolCheck = std::from_chars(start, end, Dollars);
+
+if (DolCheck.ec != std::errc {}) return false; //std::from_chars failed.
+
+//you could have two scenarios, no double like 25  or double like 25.78
+
+
+
+const char* ptr = DolCheck.ptr; //would point to the end of the line or .
+
+uint64_t FractDollars = 0; //holds cents
+
+if (ptr != end) { //decimal point exists here. 
+
+    //if its a weird symbol that were on, return false, improper CSV format
+
+    if (*ptr != '.') return false; 
+
+    ptr++; //move past the . 
+
+    //now here we could be at 25.\n   or 25.% or 25.8
+    //handle the first two example cases which are invalid
+
+    if (ptr == end || *ptr < '0' || *ptr > '9') return false; //there should be a valid integer in here 
+    //this also handles negative inputs
+
+    //we have permission to move forward
+    //we should move one integer at a time. because 25.8 to FractDollars (that represents cents) can be interpreted
+    //as only 8 cents even though .8 actually implies 80 cents here!
+
+    u_int16_t TensPlace = 0; //stores tens place
+
+    auto FractCheck1 = std::from_chars(ptr, ptr+1, TensPlace); //move one character at a time.
+
+    if (FractCheck1.ec != std::errc {}) return false; //std::from_chars has failed.
+
+    ptr = FractCheck1.ptr;
+
+    FractDollars += TensPlace * 10; //add to total cents accounting for tens place value.
+
+    
+    //now ptr can end up at   25.5\n   25.5#  25.57\n   where case 2 should be avoided.
+
+    //ptr can legally reach the end here
+
+    if (ptr == end) {
+        //we need to multiply Dollars by 100 for its value in cents. But we must be careful of integer overflow
+        //for really large bidAmounts
+
+        const Cents maxValue = std::numeric_limits<Cents>::max(); //max possible value before overflow
+
+        //check if the prospective total exceeds maxValue 
+
+        if (Dollars > (maxValue - FractDollars) / 100) return false; //will result in integer overflow!
+
+        //we can safely get total:
+
+        Dollars *= 100;
+        total = Dollars + FractDollars;
+
+        //account for if total is 0. implies an invalid bid amount
+        if (total == 0) return false;
+
+        return true; //can exit here.
+    }
+
+    //now we could be at either 25.5# or 25.57\n check case 1
+
+
+    if (*ptr < '0' || *ptr > '9') return false; //invalid  character
+
+    //we have reached the last decimal place.
+
+    uint16_t OnesPlace = 0;
+
+    //should still move one at a time, there could be 25.2555 which is illegal
+
+    auto FractCheck2 = std::from_chars(ptr, ptr+1, OnesPlace);
+
+    if (FractCheck2.ec != std::errc {}) return false;
+
+    FractDollars += OnesPlace; //add ones place cents this should be the final value
+
+
+    ptr = FractCheck2.ptr;  //if this is a proper CSV line this should be the end!
+
+
+    if (ptr != end) return false; //also ignores any weird symbols and extra integer places
+
+}
+
+//we can add up total and return true here.
+//Just like previously, we must account for integer overflow
+
+const Cents maxValue = std::numeric_limits<Cents>::max();
+
+if (Dollars > (maxValue - FractDollars) / 100) return false; //integer overflow
+
+Dollars *= 100; 
+
+total = Dollars + FractDollars;
+
+if (total == 0) return false;
+
+return true; 
+
+}
 
 inline bool ParseFile(const char* iterator, std::size_t size, AdEngine& engine) {
     const char* endOfFile = iterator + size; //pointer arithmetic returns onne past end
@@ -99,14 +214,10 @@ inline bool ParseFile(const char* iterator, std::size_t size, AdEngine& engine) 
 
             //FOR Bid amount 
 
-            auto BA = std::from_chars(fields, endLine, currEvent.bidAmount);
+            //CSV file has doubles we must account for that to get actual Cents 
 
-            if (BA.ec != std::errc {} || BA.ptr != endLine) return false;
-            //CI.ptr doesnt need to be a comma we should be at the end
-
-            fields = BA.ptr; //no more comma should be it.
-
-
+            if (!CentsBidAmountParser(fields, endLine, currEvent.bidAmount)) return false;
+            
             
              engine.processBidEvent(currEvent); 
              //finally insert parsed information only when the CSV
@@ -121,11 +232,8 @@ inline bool ParseFile(const char* iterator, std::size_t size, AdEngine& engine) 
 
         iterator = (newLine == endOfFile) ? endOfFile : newLine + 1;
 
-        //now that line has been parsed, insert to the Engine to be processed
-
-       
-
         
+
     }
     return true;
 }

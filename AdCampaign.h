@@ -3,11 +3,14 @@
 #include <cstdint>
 #include <unordered_set>
 
+using Cents = uint64_t; //unsigned long long to represent amount of cents to maintain integer comparison rather
+//than using double. Same size, but more accurate comparisons.
+
 
 //each line of the CSV will be parsed into a struct
 struct BidEvent {
     uint64_t timestamp; //time ad showed up
-    double bidAmount; //amount of money spent
+    Cents bidAmount; //amount of money spent
     uint32_t userID; //who was the user
     uint32_t campaignID; //from what campaign
 };
@@ -19,20 +22,20 @@ class AdCampaign {
 
     /*Constuctor takes in a unique ID and a budget before
     the CSV comes in */
-    AdCampaign(uint32_t campaignID, double budget)
+    AdCampaign(uint32_t campaignID, Cents budget)
     : m_campaignID {campaignID}, m_RemainingBudget {budget} {}
 
 
     /*Boolean member function checks if Campaign has enough balance
     for each bid */
-    bool canAfford (double bidAmount) const;
+    bool canAfford (Cents bidAmount) const;
 
     //if the bool member function above succeeds, make a transaction and keep track of unique impressions.
-    void transaction(double bidAmount, uint32_t userID);
+    void transaction(Cents bidAmount, uint32_t userID);
 
     /*Getter functions
     analyses how successful the Campaign was */
-    double returnBalance() const {return m_RemainingBudget;}
+    Cents returnBalance() const {return m_RemainingBudget;}
     uint32_t returnTotalImpressions() const {return totalImpressions;}
     size_t returnUniqueReach() const { return uniqueUsers.size();}
 
@@ -40,7 +43,7 @@ class AdCampaign {
 
     private:
 
-    double m_RemainingBudget; //each starts off with $50,000
+    Cents m_RemainingBudget; //each starts off with $50,000 OR 5 million Cents
     uint32_t totalImpressions {0}; //returns amount of impressions including impressions from the same user
     uint32_t m_campaignID; //unique campaign ID
 
@@ -50,13 +53,21 @@ class AdCampaign {
 
 };
 
-inline bool AdCampaign::canAfford(double bidAmount) const {
-    return m_RemainingBudget >= bidAmount;
+
+//bottom member function needs to be fixed. Does double comparison. Double comparison gets messy since we cannot
+//directly compare it. we can use an integer representing total cents.
+
+//we can also validate whether it takes in negative bigAmounts!
+inline bool AdCampaign::canAfford(Cents bidAmount) const {
+    return m_RemainingBudget >= bidAmount; //now were comparing Cents rather than floating point numbers
 }
-inline void AdCampaign::transaction(double bidAmount, uint32_t userID) {
+
+//negative check is especially relevant here! Negative checks can actually increase the budget
+inline void AdCampaign::transaction(Cents bidAmount, uint32_t userID) {
     m_RemainingBudget -= bidAmount;
     totalImpressions++;
 
+    
     uniqueUsers.insert(userID);
     
 }

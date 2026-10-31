@@ -16,9 +16,9 @@ int main() {
 
 AdEngine Engine {};
 
-//There are 100 different Campaigns, where each start with $50,000 before CSV processing.
+//There are 100 different Campaigns, where each start with $50,000 (or 5 million cents) before CSV processing.
 for (int i = 1; i < 101; ++i) {
-    Engine.insertCampaign(i, 50000.0);
+    Engine.insertCampaign(i, 5'000'000);
 }
 
 
@@ -73,7 +73,9 @@ double timeElapsed = t.timeElapsed();
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
 std::cout << std::left << std::setfill(' ') << "Processing Comlete!\n";
 std::cout << "Elapsed Time to process Ads: " << timeElapsed << " milliseconds\n";
-std::cout << "Total Revenue Processed: $" << std::fixed << std::showpoint << Engine.getRevenue() << '\n';
+
+//check this output statement for errors
+std::cout << "Total Revenue Processed: $" << Engine.getRevenue() / 100 << "." << Engine.getRevenue() % 100 << '\n';
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
 
 
