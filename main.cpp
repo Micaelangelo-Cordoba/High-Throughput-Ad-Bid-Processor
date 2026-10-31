@@ -34,6 +34,7 @@ const char* filepath = "bids_data.csv";
 int canOpen = open(filepath, O_RDONLY);
 if(canOpen == -1) {
     std::cerr << "Error: Could not open bids_data.csv\n";
+    close(canOpen);
     return 1;
 }
 
@@ -47,13 +48,15 @@ int metaData = fstat(canOpen, &fileInfo);
 
 if (metaData == -1) {
     std::cerr << "Failed to retrieve CSV file metadata.\n";
+    close(canOpen);
     return -1;
 }
 
 size_t fileSize = fileInfo.st_size;
 
-if (fileSize == 0) {
+if (fileSize <= 0) {
     std::cerr << "Empty CSV file.\n";
+    close(canOpen);
     return 1; 
 }
 
@@ -80,6 +83,8 @@ Timer t;
 if (!ParseFile(fileData, fileSize, Engine)) {
     //returns false
     std::cerr << "FAILED TO PARSE. INVALID CSV FORMAT OR INFORMATION\n";
+    close(canOpen);
+    munmap((void*)fileData, fileSize);
     return 1; 
 }
 double timeElapsed = t.timeElapsed(); 

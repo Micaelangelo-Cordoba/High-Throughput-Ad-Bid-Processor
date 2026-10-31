@@ -11,7 +11,7 @@
 
 
 //should be from start of double value to endLine (pointer to where last parsable value ends)
-bool CentsBidAmountParser(const char* start, const char* end, Cents& total) { //25.67\n
+inline bool CentsBidAmountParser(const char* start, const char* end, Cents& total) { //25.67\n
 //start should be the start of that double value
 
 uint64_t Dollars = 0; //get dollars first, the dot allows the first section of the double to be processed.
