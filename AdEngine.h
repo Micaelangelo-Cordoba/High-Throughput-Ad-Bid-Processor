@@ -42,16 +42,18 @@ inline void AdEngine::insertCampaign(uint32_t campaignID, Cents Budget) {
 
 inline BidStatus AdEngine::processBidEvent(const BidEvent& event) {
     using enum BidStatus;
-    Statistics.totalEvents++; //Applies regardless of sucess or fail
+    
 
     if (event.bidAmount <= 0) { //invalid bid amount
         Statistics.InvalidBids++;
+        Statistics.totalEvents++; 
         return INVALID_BID;
     }
 
     auto Campaign {campaigns.find(event.campaignID)};  
     if (Campaign == campaigns.end()) { //indicated unknown campaign 
         Statistics.UnknownCampaigns++;
+        Statistics.totalEvents++; 
         return UNKNOWN_CAMPAIGN;
 
     }
@@ -61,6 +63,7 @@ inline BidStatus AdEngine::processBidEvent(const BidEvent& event) {
 
     if (!Campaign->second.canAfford(event.bidAmount)) {      
        Statistics.InsufficientBudgets++;
+       Statistics.totalEvents++; 
        return INSUFFICIENT_FUNDS;
     }
     
@@ -69,6 +72,7 @@ inline BidStatus AdEngine::processBidEvent(const BidEvent& event) {
     Campaign->second.transaction(event.bidAmount, event.userID);
     totalRevenue += event.bidAmount;
     Statistics.AcceptedBids++;
+    Statistics.totalEvents++; 
     return ACCEPTED;   
 }
 

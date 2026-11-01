@@ -85,12 +85,14 @@ inline bool AdCampaign::canAfford(Cents bidAmount) const {
 
 
 inline void AdCampaign::transaction(Cents bidAmount, uint32_t userID) {
+    uniqueUsers.insert(userID); //order has been changed. Realized that exceptions can be thrown here
+    //should ensure values arent modified when exceptions are thrown
+
     m_RemainingBudget -= bidAmount;
     totalImpressions++;
 
-    
-    uniqueUsers.insert(userID);
-    
+
+ 
 }
 
 
