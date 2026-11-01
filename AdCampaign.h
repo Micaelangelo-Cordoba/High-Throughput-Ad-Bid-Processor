@@ -15,6 +15,23 @@ struct BidEvent {
     uint32_t campaignID; //from what campaign
 };
 
+//Adding enum class BidStatus that returns an indication to a caller on whether a bid suceeded or why
+//it failed for testing.
+enum class BidStatus {
+    ACCEPTED, //Bid has a legitimate value that is being sent to a legitimate campaign 
+    INVALID_BID, //bid has an improper value, either its 0, or negative amount
+    INSUFFICIENT_FUNDS, //bidAmount is too large for a specific campaign to accept
+    UNKNOWN_CAMPAIGN //bid is being sent from another campaign
+};
+//Also introducing a AdStats struct that will actually keep track of Event information!
+struct AdStats {
+    uint64_t totalEvents {}; //calculate the amount of actual Bid events there are
+    uint64_t AcceptedBids {}; //calculate how many bids were accepted.
+    uint64_t InvalidBids {}; //calculate how many bids were denied by value 
+    uint64_t InsufficientBudgets {}; //how many times a specific campaign ran out of money
+    uint64_t UnknownCampaigns {}; //how many events occured where a bid was being sent to an unknown 
+    //campaignID
+};
 
 class AdCampaign {
 

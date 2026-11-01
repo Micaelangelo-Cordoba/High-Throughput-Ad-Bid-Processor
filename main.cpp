@@ -90,11 +90,20 @@ if (!ParseFile(fileData, fileSize, Engine)) {
 double timeElapsed = t.timeElapsed(); 
 
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
-std::cout << std::left << std::setfill(' ') << "Processing Comlete!\n";
-std::cout << "Elapsed Time to process Ads: " << timeElapsed << " milliseconds\n";
+std::cout << std::left << std::setfill(' ') << "Processing Complete!\n";
 
-//check this output statement for errors
+
+//Get AdStatistic information
+const AdStats& ADS {Engine.getStatistics()};
+std::cout << std::endl;
+std::cout << "Total Events Processed: " << ADS.totalEvents << '\n';
+std::cout << "Accepted Bid Events:    " << ADS.AcceptedBids << '\n';
+std::cout << "Invalid Bids:           " << ADS.InvalidBids << '\n';
+std::cout << "Insufficient Budgets:   " << ADS.InsufficientBudgets << '\n';
+std::cout << "Unknown Campaigns:      " << ADS.UnknownCampaigns << "\n\n";
 std::cout << "Total Revenue Processed: $" << Engine.getRevenue() / 100 << "." << std::right << std::setw(2) << std::setfill('0') << Engine.getRevenue() % 100 << '\n';
+std::cout << "Elapsed Time to process Ads: " << timeElapsed << " milliseconds\n";
+std::cout << "Total Throughput: " << ADS.totalEvents / (timeElapsed / 1000) << " events/sec\n";
 std::cout << std::right << std::setw(50) << std::setfill('=') << '\n';
 
 
